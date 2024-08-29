@@ -1,6 +1,8 @@
 const inquirer = require('inquirer');
 const express = require('express');
 const { Pool } = require('pg');
+const { viewDepartments, viewRoles, viewEmployees } = require('./queries/db_queries')
+
 
 const PORT = process.env.PORT || 3002;
 const app = express();
@@ -9,63 +11,58 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-const pool = new Pool(
-    {
-        user: 'postgres',
-        password: 'Hunter123!',
-        host: 'localhost',
-        database: 'employee_db'
-    },
-    console.log(`Connected to Employee Database System!`)
-)
-
-pool.connect();
-
-const navigationQuestion =
-    [
-        {
-            type: 'list',
-            name: 'selection',
-            message: 'What would you like to do?',
-            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update an Employee Role']
-        },
-    ];
-
-
 function start() {
     inquirer
-        .prompt(navigationQuestion)
+        .prompt([
+            {
+                type: 'list',
+                name: 'selection',
+                message: 'What would you like to do?',
+                choices: [
+                    {
+                        name: 'View All Departments',
+                        value: 'VIEW_DEPARTMENTS'
+                    },
+                    {
+                        name: 'View All Roles',
+                        value: 'VIEW_ROLES'
+                    },
+                    {
+                        name: 'View All Employees',
+                        value: 'VIEW_EMPLOYEES'
+                    },
+                    {
+                        name: 'Add a Department',
+                        value: 'ADD_DEPARTMENT'
+                    },
+                    {
+                        name: 'Add a Role',
+                        value: 'ADD_ROLE'
+                    },
+                    {
+                        name: 'Add an Employee',
+                        value: 'ADD_EMPLOYEE'
+                    },
+                ]
+            },
+        ])
         .then((input) => {
+            console.log(input)
             const selectedOption = input.selection;
-
             switch (selectedOption) {
-                case 'View All Departments':
-                    app.get('/api/department', (req, res) => {
-                        pool.query('SELECT * FROM department', (err, data) => {
-                            console.table(data)
-                        })
-                    });
+                case 'VIEW_DEPARTMENTS':
+                    viewDepartments()
                     break;
-                case 'View All Roles':
-                    app.get('/api/role', (req, res) => {
-                        pool.query('SELECT * FROM role', (err, { rows }) => {
-                            console.log(re)
-                        })
-                    });
+                case 'VIEW_ROLES':
+                    viewRoles()
                     break;
-                    break;
-                case 'View All Employees':
-                    app.get('/api/employee', (req, res) => {
-                        pool.query('SELECT * FROM employee', (err, data) => {
-                            console.log(data)
-                        })
-                    });
+                case 'VIEW_EMPLOYEES':
+                    viewEmployees()
                     break;
                 default:
-                    console.log('This is not working correctly');
+                    console.log('Error, could not load selection');
             }
         });
-    ;
 }
 
 start();
@@ -73,3 +70,4 @@ start();
 app.listen(PORT, () => {
     console.log();
 });
+
