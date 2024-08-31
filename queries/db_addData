@@ -1,0 +1,142 @@
+const inquirer = require('inquirer');
+const { Pool } = require('pg');
+
+
+const pool = new Pool(
+    {
+        user: 'postgres',
+        password: 'Hunter123!',
+        host: 'localhost',
+        database: 'employee_db'
+    },
+    console.log(`Connected to Employee Database System!`)
+)
+
+pool.connect();
+
+const addDepartment = () =>
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newDepartment',
+                message: 'What is the name of the department you would like to add?',
+            }
+        ])
+        .then((response) => {
+            const sql = `INSERT INTO department (name) VALUES ($1)`;
+            const params = response.newDepartment;
+
+            console.log(params)
+
+            pool.query(sql, [params], (err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+                pool.query('SELECT * FROM department', (err, { rows }) => {
+                    console.table(rows)
+                });
+            })
+        })
+
+const addRole = () => {
+    let departmentArray = []
+
+    const departments =
+        pool.query('SELECT name AS name, id AS value FROM department', function (err, { rows }) {
+            if (err) {
+                console.log(err)
+            }
+            rows.forEach(departmentOptions => {
+                departmentArray.push(departmentOptions)
+            });
+        })
+
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newTitle',
+                message: 'What is the name of the role you would like to add?',
+            },
+            {
+                type: 'input',
+                name: 'newSalary',
+                message: 'What is the salary you would like to assign to this role?',
+            },
+            {
+                type: 'list',
+                name: 'expectedDepartment',
+                message: 'Which department will this role be under?',
+                choices: departmentArray
+            }
+        ])
+        .then((newRole) => {
+            const sql = `INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)`;
+            const title = newRole.newTitle
+            const salary = newRole.newSalary;
+            const department = newRole.expectedDepartment;
+
+            pool.query(sql, [title, salary, department], (err, result) => {
+                if (err) {
+                    console.log(err);
+                }
+            })
+            pool.query('SELECT * FROM role', (err, { rows }) => {
+                console.table(rows)
+            })
+        });
+}
+
+const addEmployee = () => {
+    let roleArray = []
+
+    const roles =
+        pool.query('SELECT title AS name, id AS value FROM role', function (err, { rows }) {
+            if (err) {
+                console.log(err)
+            }
+            rows.forEach(roleOptions => {
+                roleArray.push(roleOptions)
+            });
+        })
+
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newFirstName',
+                message: 'What is the first name of the employee you would like to add?',
+            },
+            {
+                type: 'input',
+                name: 'newLastName',
+                message: 'What is the last name of the employee you would like to add?',
+            },
+            {
+                type: 'list',
+                name: 'selectedRole',
+                message: 'What is this employees role?',
+                choices: roleArray
+            }
+        ])
+        .then((newEmployee) => {
+            const sql = `INSERT INTO employee (first_name, last_name, role_id) VALUES ($1, $2, $3)`;
+            const title = newEmployee.newFirstName
+            const salary = newEmployee.newLastName;
+            const department = newEmployee.selectedRole;
+
+            console.log(title, salary, department)
+
+            pool.query(sql, [title, salary, department], (err, result) => {
+                if (err) {
+                    console.log(err);
+                } console.log('success!')
+            })
+            pool.query('SELECT * FROM employee', (err, { rows }) => {
+                console.table(rows)
+            })
+        });
+}
+
+module.exports = { addDepartment, addRole, addEmployee }
