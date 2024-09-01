@@ -11,6 +11,8 @@
   ## 1. Instructions
   To start, you will need open the integrated terminal for the folder and install the dependencies from the package.json with "npm i" (express, inquirer, pg). You will then need to run "psql -U postgres" and log in to postgres. Once logged in, you can run "\i db/schema.sql" to create your tables and then "\i db/seeds.sql".Then enter "\q". Once back in the standard terminal prompt, enter "npm start" to begin using the application.
 
+  Below is a video link demonstrating the installation and use of the application.</br>
+  https://drive.google.com/file/d/1NawubcsvOlHCCSxG1enJzZbNsJ3MmNzV/view?usp=sharing
 
 
   ## 2. Description

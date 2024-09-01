@@ -13,7 +13,7 @@ const pool = new Pool(
 pool.connect();
 
 const viewDepartments = (start) =>
-    pool.query('SELECT id AS "Role ID", name AS "Department Name" FROM department ;', (err, { rows }) => {
+    pool.query('SELECT id AS "Department ID", name AS "Department Name" FROM department ;', (err, { rows }) => {
         console.table(rows)
         start()
     })
