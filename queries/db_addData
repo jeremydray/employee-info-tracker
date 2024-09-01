@@ -88,7 +88,7 @@ const addRole = (start) => {
 
 const addEmployee = (start) => {
     let roleArray = []
-    let managerArray = [{ name: 'None', value: null }]
+    let employeeArray = [{ name: 'None', value: null }]
 
     pool.query('SELECT title AS name, id AS value FROM role', function (err, { rows }) {
         if (err) {
@@ -103,7 +103,7 @@ const addEmployee = (start) => {
             console.log(err)
         }
         rows.forEach(managerOptions => {
-            managerArray.push(managerOptions)
+            employeeArray.push(managerOptions)
         });
     })
 
@@ -129,19 +129,17 @@ const addEmployee = (start) => {
                 type: 'list',
                 name: 'selectedManager',
                 message: 'Does this employee have a manager?',
-                choices: managerArray
+                choices: employeeArray
             },
         ])
         .then((newEmployee) => {
             const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)`;
-            const title = newEmployee.newFirstName
-            const salary = newEmployee.newLastName;
-            const department = newEmployee.selectedRole;
+            const firstName = newEmployee.newFirstName
+            const lastName = newEmployee.newLastName;
+            const roleName = newEmployee.selectedRole;
             const manager = newEmployee.selectedManager;
 
-            console.log(title, salary, department, manager)
-
-            pool.query(sql, [title, salary, department, manager], (err, result) => {
+            pool.query(sql, [firstName, lastName, roleName, manager], (err, result) => {
                 if (err) {
                     console.log(err);
                 }
@@ -151,4 +149,97 @@ const addEmployee = (start) => {
 };
 
 
-module.exports = { addDepartment, addRole, addEmployee }
+const updateEmployee = (start) => {
+    let roleArray = [];
+    let currentEmployeeArray = [{ name: 'None', value: null }]
+
+    pool.query('SELECT title AS name, id AS value FROM role', function (err, { rows }) {
+        if (err) {
+            console.log(err)
+        }
+        rows.forEach(roleOptions => {
+            roleArray.push(roleOptions)
+        });
+    })
+
+    pool.query(`SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name, id AS value FROM employee`, function (err, { rows }) {
+        if (err) {
+            console.log(err)
+        }
+        rows.forEach(employeeList => {
+            currentEmployeeArray.push(employeeList)
+        });
+
+        inquirer
+            .prompt([
+
+                {
+                    type: 'list',
+                    name: 'selectedEmployee',
+                    message: 'Which employee would you like to update?',
+                    choices: currentEmployeeArray
+                },
+                {
+                    type: 'list',
+                    name: 'selectedRole',
+                    message: 'Which role needs to be assigned to this employee?',
+                    choices: roleArray
+                },
+
+            ])
+            .then((newEmployeeRole) => {
+                const sql = `UPDATE employee SET role_id = $1 WHERE id = $2`;
+                const employee = newEmployeeRole.selectedEmployee;
+                const role = newEmployeeRole.selectedRole;
+
+                console.log(employee, role)
+
+                pool.query(sql, [role, employee], (err, result) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    viewEmployees(start);
+                })
+            })
+    })
+
+
+
+    // inquirer
+    //     .prompt([
+    //         {
+    //             type: 'confirm',
+    //             name: 'updateConfirm',
+    //             message: `Are you sure you would like to update an employee's role?`,
+    //         },
+    //         {
+    //             type: 'list',
+    //             name: 'selectedEmployee',
+    //             message: 'Which employee would you like to update?',
+    //             choices: currentEmployeeArray
+    //         },
+    //         {
+    //             type: 'list',
+    //             name: 'selectedRole',
+    //             message: 'Which role needs to be assigned to this employee?',
+    //             choices: roleArray
+    //         },
+
+    //     ])
+    //     .then((newEmployeeRole) => {
+    //         const sql = `UPDATE employee SET role_id = $1 WHERE id = $2`;
+    //         const employee = newEmployeeRole.selectedEmployee;
+    //         const role = newEmployeeRole.selectedRole;
+
+    //         console.log(employee, role)
+
+    //         pool.query(sql, [role, employee], (err, result) => {
+    //             if (err) {
+    //                 console.log(err);
+    //             }
+    //             viewEmployees(start);
+    //         })
+    //     })
+};
+
+module.exports = { addDepartment, addRole, addEmployee, updateEmployee }

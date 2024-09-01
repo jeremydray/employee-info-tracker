@@ -2,7 +2,7 @@ const inquirer = require('inquirer');
 const express = require('express');
 const { Pool } = require('pg');
 const { viewDepartments, viewRoles, viewEmployees } = require('./queries/db_queries');
-const { addDepartment, addRole, addEmployee } = require('./queries/db_addData');
+const { addDepartment, addRole, addEmployee, updateEmployee } = require('./queries/db_addData');
 
 const PORT = process.env.PORT || 3002;
 const app = express();
@@ -44,6 +44,10 @@ const start = () => {
                         value: 'ADD_EMPLOYEE'
                     },
                     {
+                        name: 'Update an Employee',
+                        value: 'UPDATE_EMPLOYEE'
+                    },
+                    {
                         name: 'Close App',
                         value: 'EXIT'
                     },
@@ -70,6 +74,9 @@ const start = () => {
                     break;
                 case 'ADD_EMPLOYEE':
                     addEmployee(start)
+                    break;
+                case 'UPDATE_EMPLOYEE':
+                    updateEmployee(start)
                     break;
                 case 'EXIT':
                     process.exit();

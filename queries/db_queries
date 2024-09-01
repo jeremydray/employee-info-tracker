@@ -13,20 +13,20 @@ const pool = new Pool(
 pool.connect();
 
 const viewDepartments = (start) =>
-    pool.query('SELECT * FROM department ;', (err, { rows }) => {
+    pool.query('SELECT id AS "Role ID", name AS "Department Name" FROM department ;', (err, { rows }) => {
         console.table(rows)
         start()
     })
 
 
 const viewRoles = (start) =>
-    pool.query('SELECT role.id, role.title, role.salary, department.name FROM role JOIN department ON role.department_id = department.id', (err, { rows }) => {
+    pool.query('SELECT role.id AS "Role ID", role.title AS "Role", role.salary as "Salary", department.name AS "Department Name" FROM role JOIN department ON role.department_id = department.id', (err, { rows }) => {
         console.table(rows)
         start()
     })
 
 const viewEmployees = (start) => {
-    pool.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager_name FROM employee JOIN role ON employee.role_id = role.id LEFT JOIN employee AS manager ON employee.manager_id = manager.id`, (err, { rows }) => {
+    pool.query(`SELECT employee.id AS "Employee ID", employee.first_name AS "First Name", employee.last_name AS "Last Name", role.title AS "Role", role.salary AS "Salary", CONCAT(manager.first_name, ' ', manager.last_name) AS "Manager" FROM employee  JOIN role ON employee.role_id = role.id LEFT JOIN employee AS manager ON employee.manager_id = manager.id ORDER BY "Employee ID"`, (err, { rows }) => {
         console.table(rows);
         start()
     })
