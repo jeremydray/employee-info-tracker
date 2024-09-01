@@ -18,11 +18,11 @@ VALUES ('Staff Accountant', '50000',1),
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ('Kevin', 'Dolland', 1, 2),
-('Samantha', 'Peterson', 2, 0),
+('Samantha', 'Peterson', 2, null),
 ('Lori', 'Sanders', 3, 4),
-('Leslie', 'Smith', 4, 0),
-('Brad', 'Ray', 5, 6),
-('Lisa', 'Blevins', 6, 0),
-('Jessica', 'Jenkins', 7, 8),
-('Nancy', 'Winslow', 8, 0),
-('Reggie', 'Hunter', 9, 0);
+('Leslie', 'Smith', 4, null),
+('Jeremiah', 'Ray', 5, null),
+('Lisa', 'Blevins', 6, 7),
+('Jessica', 'Jenkins', 7, null),
+('Nancy', 'Winslow', 8, 9),
+('Reggie', 'Hunter', 9, null);

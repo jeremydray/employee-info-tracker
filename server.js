@@ -54,53 +54,34 @@ const start = () => {
             const selectedOption = input.selection;
             switch (selectedOption) {
                 case 'VIEW_DEPARTMENTS':
-                    setTimeout(function () {
-                        viewDepartments();
-                        setTimeout(function () {
-                            start()
-                        }, 1000)
-                            , 1000
-                    })
+                    viewDepartments(start);
                     break;
                 case 'VIEW_ROLES':
-                    setTimeout(function () {
-                        viewRoles();
-                        setTimeout(function () {
-                            start()
-                        }, 1000)
-                            , 1000
-                    })
+                    viewRoles(start);
                     break;
                 case 'VIEW_EMPLOYEES':
-                    setTimeout(function () {
-                        viewEmployees();
-                        setTimeout(function () {
-                            start()
-                        }, 1000)
-                            , 1000
-                    })
+                    viewEmployees(start);
                     break;
                 case 'ADD_DEPARTMENT':
-                    addDepartment();
+                    addDepartment(start);
                     break;
                 case 'ADD_ROLE':
-                    addRole()
+                    addRole(start)
                     break;
                 case 'ADD_EMPLOYEE':
-                    addEmployee()
+                    addEmployee(start)
                     break;
                 case 'EXIT':
                     process.exit();
-                    break;
                 default:
                     console.log('Error, could not load selection');
             }
         })
 }
 
-
-start();
-
 app.listen(PORT, () => {
+    start();
     console.log();
 });
+
+module.exports = start
